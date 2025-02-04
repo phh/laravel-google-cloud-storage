@@ -34,6 +34,11 @@ class GoogleCloudStorageServiceProvider extends ServiceProvider
         $bucket = $client->bucket(Arr::get($config, 'bucket'));
 
         $pathPrefix = Arr::get($config, 'root');
+
+        if ($prefix = Arr::get($config, 'prefix')) {
+            $pathPrefix = $pathPrefix ? rtrim($pathPrefix, '/') . '/' . ltrim($prefix, '/') : ltrim($prefix, '/');
+        }
+
         $visibility = Arr::get($config, 'visibility');
         $visibilityHandlerClass = Arr::get($config, 'visibilityHandler');
         $visibilityHandler = $visibilityHandlerClass ? new $visibilityHandlerClass() : null;
@@ -80,7 +85,7 @@ class GoogleCloudStorageServiceProvider extends ServiceProvider
         }
 
         if (! Arr::has($config, 'root')) {
-            $config['root'] = Arr::get($config, 'pathPrefix') ?? '';
+            $config['root'] = Arr::get($config, 'pathPrefix', '');
         }
 
         return $config;
